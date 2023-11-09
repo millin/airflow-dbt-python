@@ -80,6 +80,8 @@ class DbtBaseOperator(BaseOperator):
         no_defer: Optional[bool] = None,
         partial_parse: Optional[bool] = False,
         no_partial_parse: Optional[bool] = None,
+        introspect: Optional[bool] = None,
+        no_introspect: Optional[bool] = None,
         use_colors: Optional[bool] = None,
         no_use_colors: Optional[bool] = None,
         static_parser: Optional[bool] = None,
@@ -136,6 +138,9 @@ class DbtBaseOperator(BaseOperator):
 
         self.use_colors = use_colors
         self.no_use_colors = no_use_colors
+
+        self.introspect = introspect
+        self.no_introspect = no_introspect
 
         self.version_check = no_version_check
         self.no_version_check = no_version_check

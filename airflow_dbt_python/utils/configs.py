@@ -116,7 +116,7 @@ class BaseConfig:
     log_format_file: Optional[LogFormat] = None
     log_path: str = "logs"
     log_level: str = "info"
-    log_level_file: Optional[str] = None
+    log_level_file: str = "info"
     record_timing_info: Optional[str] = None
     debug: Optional[bool] = None
     quiet: Optional[bool] = None
@@ -139,7 +139,7 @@ class BaseConfig:
     use_colors_file: Optional[bool] = None
     no_use_colors_file: Optional[bool] = dataclasses.field(default=None, repr=False)
 
-    introspect: Optional[bool] = None
+    introspect: bool = True
     no_introspect: Optional[bool] = dataclasses.field(default=None, repr=False)
 
     populate_cache: Optional[bool] = None
@@ -349,7 +349,7 @@ class BaseConfig:
             # Represented here by the presence of the compiled_target attribute.
             self.patch_manifest_task(task)  # type: ignore
 
-        return (task, runtime_config)
+        return task, runtime_config
 
     def create_runtime_config(
         self, extra_targets: Optional[dict[str, Any]]
@@ -442,7 +442,7 @@ class BaseConfig:
         """
         project_root = self.project_dir if self.project_dir else os.getcwd()
         version_check = bool(getattr(self, "version_check", True))
-        partial_project = Project.partial_load(
+        partial_project = PartialProject.from_project_root(
             project_root, verify_version=version_check
         )
 
@@ -497,6 +497,7 @@ class SelectionConfig(BaseConfig):
     selector_name: Optional[list[str]] = None
     selector: Optional[str] = None
     state: Optional[Union[Path, str]] = None
+    defer_state: Optional[Union[Path, str]] = None
 
     # Kept for compatibility with dbt versions < 0.21
     models: Optional[list[str]] = None
@@ -506,6 +507,8 @@ class SelectionConfig(BaseConfig):
         super().__post_init__()
         if isinstance(self.state, str):
             self.state = Path(self.state)
+        if isinstance(self.defer_state, str):
+            self.defer_state = Path(self.defer_state)
 
 
 @dataclasses.dataclass
